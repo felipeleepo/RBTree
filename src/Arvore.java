@@ -12,12 +12,12 @@ public class Arvore{
         System.out.println("______________________________________");*/
     }
 
-    /*public void Remover(int valor) {
-        System.out.print("REMOÇÃO: ");
+    public void Remover(int valor) {
+        System.out.print("REMOÇÃO("+valor+")");
         a.remove(valor, a.root, a.root.pai, true);
         Imprimir();
         System.out.println("______________________________________");
-    }*/
+    }
 
     /*public void Buscar(int valor) {
         System.out.println("BUSCA: " + a.search(a.root, valor, true));

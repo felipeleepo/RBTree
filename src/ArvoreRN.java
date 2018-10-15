@@ -14,8 +14,12 @@ public class ArvoreRN {
             System.out.println("RAIZ");
         } else {
             if(n == null){
+                if(pai != null && !pai.c){
+                    System.out.println("CASO 1");
+                    n = Novo(v, n, pai, isRight);
+                }
                 // PAI e AVO NAO NULO
-                if (pai != null && avo != null) {
+                else if (pai != null && avo != null) {
                     No tio;
                     if(pai == avo.esq)
                         tio = avo.dir;
@@ -25,7 +29,7 @@ public class ArvoreRN {
                     if(pai.c && tio != null && tio.c){
                         System.out.println("CASO 2");
                         n = Novo(v, n, pai, isRight);
-                        Caso2(n, pai, avo, tio);
+                        Caso2(pai, avo, tio);
                     }else if(pai.c && (tio == null || !tio.c)){
                         if(!isRight && pai == avo.esq){
                             System.out.println("CASO 3a");
@@ -37,8 +41,7 @@ public class ArvoreRN {
                             avo.c = true; // RUBRO
                             pai.c = false; // NEGRO
                             if(pai.pai == null)
-                                root = pai;
-                            
+                                root = pai;                            
                         }
                         else if(isRight && pai == avo.dir){
                             System.out.println("CASO 3b");
@@ -66,8 +69,7 @@ public class ArvoreRN {
                             avo.dir = null;
                             n.c = false;
                             avo.c = pai.c = true;
-                        }
-                        else{
+                        }else{
                             System.out.println("CASO 3d");
                             n = Novo(v, n, pai, isRight);
                             n.esq = pai;
@@ -83,9 +85,6 @@ public class ArvoreRN {
                         }
                     }   
 
-                }else if(pai != null && !pai.c){
-                    System.out.println("CASO 1");
-                    n = Novo(v, n, pai, isRight);
                 }else{
                     System.out.println("Nenhum Caso.");
                 }                     
@@ -106,112 +105,100 @@ public class ArvoreRN {
         return n;
     }
 
-    private void Caso2(No n, No pai, No avo, No tio){
-        if(pai != null && tio != null && avo != null){
+    private void Caso2(No pai, No avo, No tio){
+        if(pai != null && tio != null){
             pai.c = tio.c = false;
-            avo.c = true;
-        }
-        if(avo.pai != null && avo.pai.pai != null){
-            No aux_tio;
-            if(avo.pai == avo.pai.pai)
-                aux_tio = avo.dir;
-            else
-                aux_tio = avo.esq;
+            if(!pai.c){
+                if(pai.esq != null)
+                    pai.esq.c = true;
+                if(pai.dir != null)
+                    pai.dir.c = true;
+            }
+            if(avo != null){
+                avo.c = true;
             
-            Caso2(avo, avo.pai, avo.pai.pai, aux_tio);
-        }
-    }
-
-    /*public void Caso3(No n, boolean isRight){
-        if(!isRight){
-            // 3A
-            if(n.pai != null && n.pai == )
-        }
-    }*/
-
-    /*public String search(No n, int v, boolean externa) {
-
-        if (n == null) {
-            if (externa) {
-                if (size == 0) {
-                    return "Árvore Vazia";
-                } else {
-                    return "Valor " + v + " não encontrado";
+                if(avo.pai != null && avo.pai.c){
+                    No aux_tio;
+                    if(avo.pai == avo.pai.pai)
+                        aux_tio = avo.pai.dir;
+                    else
+                        aux_tio = avo.pai.esq;
+                    No aux_avo = null;
+                    if( avo.pai.pai != null)
+                        aux_avo = avo.pai.pai;
+                    Caso2(avo.pai, aux_avo, aux_tio);
                 }
-            } else {
-                return "";
             }
-        } else if (n.e == v) {
-            if (externa) {
-                return "Valor encontrato " + n.e;
-            } else {
-                return "";
+            
+            if(pai == root){
+                pai.esq.c = pai.dir.c = false;
+                pai.c = true;
             }
-        } else if (v > n.e) {
-            return "" + search(n.dir, v, externa);
-        } else {
-            return "" + search(n.esq, v, externa);
-        }
+        }        
     }
 
+    public No Sucessor(No n){
+        if(n.dir == null)
+            return null;
+        else{
+            No aux = n.dir;
+            while(aux.esq != null)
+                aux = aux.esq;
+            return aux;            
+        }
+    }
+    
     public void remove(int o, No n, No pai, boolean isRight) {
 
-        if (size == 0) {
+        if (root == null) {
             System.out.println("Arvore Vazia");
         }
 
         if (n.e == o) {
-            System.out.println("Valor removido " + n.e);
-            // Não possui Filhos
-            if (n.dir == n.esq) {
-                if (isRight) {
-                    pai.dir = null;
-                } else {
-                    pai.esq = null;
-                }
-                updateNew(pai, isRight, false);
-            // Possui Filho direito
-            } else if (n.esq == null) {
-                if (isRight) {
-                    pai.dir = n.dir;
-                } else {
-                    pai.esq = n.dir;
-                }
-                n.dir = n.pai;
-                updateNew(pai, isRight, false);
-            // Possui Filho esquerdo
-            } else if (n.dir == null) {
-                if (isRight) {
-                    pai.dir = n.esq;
-                } else {
-                    pai.esq = n.esq;
-                }
-                n.esq = n.pai;
-                updateNew(pai, isRight, false);
-            // Sucessor
-            } else {
-                if (pai != null) {
-                    pai.dir = nextNode(n, pai);
-                } else {
-                    root = nextNode(n, null);
-                }
-                updateNew(n, isRight, false);
+            No aux = Sucessor(n);
+            if(aux == null){
+                if(isRight)
+                    n.pai.dir = null;
+                else
+                    n.pai.esq = null;
+                System.out.println("REmovido o ultimo");
+            }else if(n.c && aux.c){
+                n.e = aux.e;
+                if(aux.pai.dir == aux)
+                    aux.pai.dir = null;
+                else
+                    aux.pai.esq = null;
+                System.out.println("r1");
+            }else if(!n.c && aux.c){
+                n.e = aux.e;
+                if(aux.pai.dir == aux)
+                    aux.pai.dir = null;
+                else
+                    aux.pai.esq = null;
+                n.d = true;
+                System.out.println("r2");
+            }else if(!n.c && !aux.c){
+                System.out.println("r3");
+            }else{
+                System.out.println("r4");
             }
-            size--;
         } else if (n.e > o) {
             remove(o, n.esq, n, false);
         } else {
             remove(o, n.dir, n, true);
         }
     }
-*/
+
     private void printNodeValue(No n) {
         String cor;
+        String duplo = "";
         if(n.c)
             cor = "R";
         else
             cor = "N";
-        System.out.print(n.e + "[" + cor + "]" );
+        if(n.d)
+            duplo = "=";
+        System.out.print(n.e + "[" + cor + "]" + duplo );
         System.out.print('\n');
     }
 

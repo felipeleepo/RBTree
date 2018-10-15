@@ -7,11 +7,9 @@ class Main {
     rb.Imprimir();
     rb.Inserir(1);
     rb.Imprimir();
-    rb.Inserir(2);
-    rb.Imprimir();
     rb.Inserir(4);
     rb.Imprimir();
-    rb.Inserir(5);
-    rb.Imprimir();
+    
+    rb.Remover(3);
   }
 }

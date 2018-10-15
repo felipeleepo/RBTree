@@ -2,6 +2,7 @@ public class No {
     int e;
     No pai, dir, esq;
     boolean c; // RUBRO = t, NEGRO = f
+    boolean d = false;
     
     public No (int s){
         e = s;
