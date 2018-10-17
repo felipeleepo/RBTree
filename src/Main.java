@@ -1,15 +1,42 @@
 class Main {
   public static void main(String[] args) {
     Arvore rb = new Arvore();
-    rb.Inserir(3);
-    rb.Imprimir();
-    rb.Inserir(0);
-    rb.Imprimir();
+    /*rb.Inserir(7);
+    rb.Inserir(2);
     rb.Inserir(1);
-    rb.Imprimir();
+    rb.Inserir(9);
     rb.Inserir(4);
-    rb.Imprimir();
+    rb.Inserir(6);
+    rb.Inserir(15);
+    rb.Inserir(8);
+    rb.Imprimir();*/
     
-    rb.Remover(3);
+    // Remocao Caso 1 
+    // rb.Remover(7);
+    // Remocao Caso 2 
+    // rb.Remover(4);
+    
+    rb.Inserir(10);
+    rb.Inserir(6);
+    rb.Inserir(8);
+    rb.Inserir(4);
+//    rb.Inserir(2);
+    
+    rb.Imprimir();   
+    
+    // Remoca Caso 3.1
+    //rb.Remover(2);
+
+    /*rb.Inserir(7);
+    rb.Inserir(2);
+    rb.Inserir(1);
+    rb.Inserir(8);
+    rb.Inserir(4);
+    rb.Inserir(6);
+    rb.Inserir(15);
+    rb.Imprimir();*/
+    
+    // Remocao Caso 4 
+    //rb.Remover(7);
   }
 }
