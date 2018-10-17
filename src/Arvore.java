@@ -8,8 +8,8 @@ public class Arvore{
     public void Inserir(int valor) {
         System.out.print("INSERÇÃO(" + valor + ") ");
         a.insert(a.root, valor, null, null, true);
-        /*Imprimir();
-        System.out.println("______________________________________");*/
+        Imprimir();
+        System.out.println("______________________________________");
     }
 
     public void Remover(int valor) {
@@ -31,9 +31,7 @@ public class Arvore{
     /*public void ImprimirEmOrdem() {
         a.printInOrder(a.root);
     }
-
     public void Altura() {
-
     }*/
     
 }
