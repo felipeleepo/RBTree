@@ -81,6 +81,7 @@ public class ArvoreRN {
                             if(avo.pai == null)
                                 root = n;
                             avo.pai = n;
+                            pai.pai = n;
                             pai.esq = null;
                             avo.dir = null;
                             n.c = false;
@@ -94,6 +95,7 @@ public class ArvoreRN {
                             if(avo.pai == null)
                                 root = n;
                             avo.pai = n;
+                            pai.pai = n;
                             pai.dir = null;
                             avo.esq = null;
                             n.c = false;
@@ -188,7 +190,7 @@ public class ArvoreRN {
             }
             aux = aux.pai;
         }
-        System.out.println("Sucessor: " + aux.e);
+        System.out.print("\nSucessor: " + aux.e);
         return aux;            
         
     }
@@ -200,44 +202,65 @@ public class ArvoreRN {
         }
 
         if (n.e == o) {
-            No aux = Sucessor(n);
+            
+            No aux;
             if(n.dir == null && n.esq == null){
                 if(isRight)
                     n.pai.dir = null;
                 else
                     n.pai.esq = null;
-                System.out.println("REmovido o ultimo");
-            }else if(n.c && aux.c){
-                System.out.println("CASO 1");
-                n.e = aux.e;
-                if(aux.pai.dir == aux)
-                    aux.pai.dir = null;
-                else
-                    aux.pai.esq = null;
-            }else if(!n.c && aux.c){
-                System.out.println("CASO 2");
-                n.e = aux.e;
-                if(aux.pai.dir == aux)
-                    aux.pai.dir = null;
-                else
-                    aux.pai.esq = null;
-                n.d = true;
-            }else if(!n.c && !aux.c){
-                System.out.print("CASO 3");
-                n.e = aux.e;
-                if(aux.pai.dir == aux)
-                    aux.pai.dir = null;
-                else
-                    aux.pai.esq = null;
-                Situacao3(n);
+                System.out.println("\nRemovido o Último");
             }else{
-                System.out.println("CASO 4");
-                n.e = aux.e;
-                /*if(aux.pai.dir == aux)
-                    aux.pai.dir = null;
-                else
-                    aux.pai.esq = null;*/
+
+                boolean removidoCor = n.c;
+                boolean auxCor;
+                if(n.dir == null){
+                    aux = n.esq;
+                    System.out.print("\nSubÁrvore Esquerda subiu");
+                }else if(n.esq == null){
+                    aux = n.dir;
+                    System.out.print("\nSubÁrvore Direita subiu");
+                }else{
+                    aux = Sucessor(n);
+                    auxCor = aux.c;
+                    aux.pai = n.pai;
+                    aux.esq = n.esq;
+                    aux.esq.pai = aux;
+                    if(aux.pai != null){
+                        if(aux.pai.dir == aux)
+                            aux.pai.dir = null;
+                        else
+                            aux.pai.esq = null;
+                    }else
+                        root = aux;
+                }
+
+                auxCor = aux.c;
+                aux.pai = n.pai;
+                if(aux.pai != null){
+                    if(isRight)
+                        n.pai.dir = aux;
+                    else
+                        n.pai.esq = aux;
+                }
+
+                if(removidoCor && auxCor){
+                    System.out.println("\nCASO 1");                    
+                }else if(!removidoCor && auxCor){
+                    System.out.println("\nCASO 2");
+                    aux.c = false;
+                    if(aux != root)
+                        aux.d = true;
+                }else if(!removidoCor && !auxCor){
+                    System.out.print("\nCASO 3");
+                    if(aux != root)
+                        aux.d = true;
+                    Situacao3(aux, isRight);
+                }else{
+                    System.out.println("\nCASO 4");
+                }
             }
+                
         } else if (n.e > o) {
             remove(o, n.esq, n, false);
         } else {
@@ -245,22 +268,26 @@ public class ArvoreRN {
         }
     }
     
-    public void Situacao3(No n){
+    public void Situacao3(No n, boolean isRight){
         No w = Irmao(n);
+         Mostrar(n);
         boolean FilhoWEsqNegro = false;
         boolean FilhoWDirNegro = false;
-        
+        // PAREI NO CASO .2B
         if(w != null && (w.esq == null || !w.esq.c)){
             FilhoWEsqNegro = true;
         }
         if(w != null && (w.dir == null || !w.dir.c)){
             FilhoWDirNegro = true;
-        }
+        }System.out.println(!n.c + " " +"" + " " +FilhoWEsqNegro+ " "+FilhoWDirNegro + " " + (n.pai != null && n.pai.c));
         if(!n.c && (w != null && w.c) && (n.pai != null && !n.pai.c)){
             System.out.println(".1");
-            // Rotacao Esquerda
-            // irmao negro
-            // pai rubro
+            if(isRight)
+                RotacaoEsquerda(n.pai);
+            else
+                RotacaoDireita(n.pai);
+            w.c = false;
+            n.pai.c = true;
         }else if(!n.c && (w == null || !w.c) && FilhoWEsqNegro && FilhoWDirNegro && (n.pai != null && !n.pai.c)){
             System.out.println(".2a");
             // irmao rubro
@@ -315,7 +342,7 @@ public class ArvoreRN {
         }
     }
     
-    public void Mostrar(No n){
+    private void Mostrar(No n){
         String ene = "";
         if(n != null){
             ene += n.e;
@@ -336,5 +363,41 @@ public class ArvoreRN {
         else
             ene += "null";
         System.out.print(ene);
+    }
+
+    private void RotacaoDireita(No n){
+        No subD = n.dir;
+        n.dir = subD.esq;
+        if (n.dir != null) {
+            n.dir.pai = n;
+        }
+
+        subD.esq = n;
+        subD.pai = n.pai;
+        n.pai = subD;
+
+        if (subD.pai != null) {
+            subD.pai.dir = subD;
+        } else {
+            root = subD;
+        }
+    }
+
+    private void RotacaoEsquerda(No n){
+        No subE = n.esq;
+        n.esq = subE.esq;
+        if (n.esq != null) {
+            n.esq.pai = n;
+        }
+
+        subE.dir = n;
+        subE.pai = n.pai;
+        n.pai = subE;
+
+        if (subE.pai != null) {
+            subE.pai.esq = subE;
+        } else {
+            root = subE;
+        }
     }
 }
